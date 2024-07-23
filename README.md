@@ -15,7 +15,7 @@ Python script that allows a Raspberry Pi to connect to a Newport motor controlle
 
 #### Installing RaspberryPi OS:
 
-	To install RPI OS, download the raspberry pi imager onto a pc or laptop. Insert the SD card, and within the imager, select “Raspberry Pi 4” for Raspberry Pi Device, select “Raspberry Pi OS (64-bit)” for Operating System and select your SD card for storage device. Once the OS has installed, eject the card from your device, and insert into the bottom of the Pi.
+To install RPI OS, download the raspberry pi imager onto a pc or laptop. Insert the SD card, and within the imager, select “Raspberry Pi 4” for Raspberry Pi Device, select “Raspberry Pi OS (64-bit)” for Operating System and select your SD card for storage device. Once the OS has installed, eject the card from your device, and insert into the bottom of the Pi.
 
 #### Initial Set Up and Connecting:
 	
