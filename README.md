@@ -65,9 +65,10 @@ cd environmentName
 . environmentName/bin/activate
 ```
 
-Once you have created your environment, you need to install the required python packages with the following commands. If you select all the commands and paste them together and enter, they will all run at the same time.
+Once you have created your environment, you need to install the required python packages with the following commands. One will allow you to download this repository, and the next will allow you to download all the libraries used.
 
 ```
+wget https://github.com/tmid1/JILA-RPi-Laser-Adjuster/main.tar.gz
 pip install -r requirements.txt
 ```
 
