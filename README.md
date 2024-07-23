@@ -19,12 +19,12 @@ To install RPI OS, download the raspberry pi imager onto a pc or laptop. Insert 
 
 #### Initial Set Up and Connecting:
 	
-	Once your Pi has its SD card, power it via USB-C, this is the only way it can be powered. From there, connect the Pi to a monitor, via a micro-HDMI cord, a mouse, via USB, and a keyboard, via USB. Set an easy to remember password for logging into the Pi, and choose your default browser as Chromium. Connect the Pi to the JILAn wifi, and then register the Pi to the JILA computing department. To this, go to the JILA website, and click the tools icon, and access JILA Virtual with your JILA login. From there, go to the Tools, Resources & Quicklinks section, and select “See More Forms”. From there, find the “Computer/Device Registration” form, and register the Pi. If you need help with this, find someone from the computing department on floor 2, and they can help you quickly register the Pi! 
+Once your Pi has its SD card, power it via USB-C, this is the only way it can be powered. From there, connect the Pi to a monitor, via a micro-HDMI cord, a mouse, via USB, and a keyboard, via USB. Set an easy to remember password for logging into the Pi, and choose your default browser as Chromium. Connect the Pi to the JILAn wifi, and then register the Pi to the JILA computing department. To this, go to the JILA website, and click the tools icon, and access JILA Virtual with your JILA login. From there, go to the Tools, Resources & Quicklinks section, and select “See More Forms”. From there, find the “Computer/Device Registration” form, and register the Pi. If you need help with this, find someone from the computing department on floor 2, and they can help you quickly register the Pi! 
 
 
 #### Checking for updates:
 
-	Once your Pi is set up, it is important to check for updates. This process can be simply done by opening the terminal entering these commands:
+Once your Pi is set up, it is important to check for updates. This process can be simply done by opening the terminal entering these commands:
 
 ```
 sudo apt update 
@@ -49,7 +49,7 @@ Once you have run these commands, reboot your Pi, by clicking the Raspberry icon
 
 #### Creating a virtual environment:
 
-	To run our program, we will need to create a virtual environment. First, create a folder on your desktop to contain the environment. To do this, navigate to the terminal and use these commands:
+To run our program, we will need to create a virtual environment. First, create a folder on your desktop to contain the environment. To do this, navigate to the terminal and use these commands:
 
 ```
 cd Desktop
@@ -73,7 +73,7 @@ pip install -r requirements.txt
 
 #### Installing Vimba X and Vimba API:
 
-	The first step of installing the Vimba API for python is to download Vimba X for Linux ARM64. Navigate to this link, https://www.alliedvision.com/en/products/software/vimba-x-sdk/, on the Pi using Chromium. Scroll down to the downloads section and download the file called “VimbaX_Setup-2023-4-Linux_ARM64.tar.gz”. Once this is downloaded, drag to file to your desktop, and place it within the folder we created. Once inside, place it within the virtual environment folder. The file should be on the same level as the bin, lib, include, and other folders that were created with the virtual environment. After placing the file on the correct level, open a new terminal and run the following command:
+The first step of installing the Vimba API for python is to download Vimba X for Linux ARM64. Navigate to this link, https://www.alliedvision.com/en/products/software/vimba-x-sdk/, on the Pi using Chromium. Scroll down to the downloads section and download the file called “VimbaX_Setup-2023-4-Linux_ARM64.tar.gz”. Once this is downloaded, drag to file to your desktop, and place it within the folder we created. Once inside, place it within the virtual environment folder. The file should be on the same level as the bin, lib, include, and other folders that were created with the virtual environment. After placing the file on the correct level, open a new terminal and run the following command:
 
 ```
 tar xvf /PATH/TO/VimbaX_Setup-2023-4-Linux_ARM64.tar.gz
