@@ -4,10 +4,10 @@ Python script that allows a Raspberry Pi to connect to a Newport motor controlle
 ## Instructions for Raspberry Pi mirror adjustment device!
 
 **Required equipment:**
-- Newport Motor Controller 8742
-- Newport Motorized Mirror Mount 8821
+- [Newport Motor Controller 8742](https://www.newport.com/p/8742)
+- [Newport Motorized Mirror Mount 8821](https://www.newport.com/p/8821)
 - Mako Camera U 130 B or other Vimba X compatible camera
-- Raspberry Pi 4 Model B (I used the 4GB RAM version)
+- [Raspberry Pi 4 Model B](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/) (I used the 4GB RAM version)
 - NEW or formatted MicroSD Card and SD adapter (I used a 64GB card)
 
 
@@ -15,7 +15,7 @@ Python script that allows a Raspberry Pi to connect to a Newport motor controlle
 
 #### Installing RaspberryPi OS:
 
-To install RPI OS, download the raspberry pi imager onto a pc or laptop. Insert the SD card, and within the imager, select “Raspberry Pi 4” for Raspberry Pi Device, select “Raspberry Pi OS (64-bit)” for Operating System and select your SD card for storage device. Once the OS has installed, eject the card from your device, and insert into the bottom of the Pi.
+To install RPI OS, download the [raspberry pi imager](https://www.raspberrypi.com/software/) onto a pc or laptop. Insert the SD card, and within the imager, select “Raspberry Pi 4” for Raspberry Pi Device, select “Raspberry Pi OS (64-bit)” for Operating System and select your SD card for storage device. Once the OS has installed, eject the card from your device, and insert into the bottom of the Pi.
 
 #### Initial Set Up and Connecting:
 	
@@ -73,7 +73,7 @@ pip install -r requirements.txt
 
 #### Installing Vimba X and Vimba API:
 
-The first step of installing the Vimba API for python is to download Vimba X for Linux ARM64. Navigate to this link, https://www.alliedvision.com/en/products/software/vimba-x-sdk/, on the Pi using Chromium. Scroll down to the downloads section and download the file called “VimbaX_Setup-2023-4-Linux_ARM64.tar.gz”. Once this is downloaded, drag to file to your desktop, and place it within the folder we created. Once inside, place it within the virtual environment folder. The file should be on the same level as the bin, lib, include, and other folders that were created with the virtual environment. After placing the file on the correct level, open a new terminal and run the following command:
+The first step of installing the Vimba API for python is to download Vimba X for Linux ARM64. Navigate to [this link](https://www.alliedvision.com/en/products/software/vimba-x-sdk/), on the Pi using Chromium. Scroll down to the downloads section and download the file called “VimbaX_Setup-2023-4-Linux_ARM64.tar.gz”. Once this is downloaded, drag to file to your desktop, and place it within the folder we created. Once inside, place it within the virtual environment folder. The file should be on the same level as the bin, lib, include, and other folders that were created with the virtual environment. After placing the file on the correct level, open a new terminal and run the following command:
 
 ```
 tar xvf /PATH/TO/VimbaX_Setup-2023-4-Linux_ARM64.tar.gz
@@ -92,7 +92,7 @@ python -m pip install /path/to/environment/folder/VimbaX_2023-4/api/python/vmbpy
 
 #### Installing Newport Motor USB Drivers:
 
-Currently, the given USB driver software that comes with the motor controller is only made for windows, as it is in the form of a .exe file. To bypass this, there are a few steps that will be needed to emulate windows on the Pi, but be warned, these take quite a while to download! The first step is to install Wine, by following this YouTube video. The only notable difference from the video is that you must install the 64 bit versions of everything, instead of the 86x, ie, Box64, etc. Now, there is an additional add-on needed to run the .exe file from Newport, called .NET. To install this, simply run the following command outside in a new terminal outside of your virtual environment:
+Currently, the given USB driver software that comes with the motor controller is only made for windows, as it is in the form of a .exe file. To bypass this, there are a few steps that will be needed to emulate windows on the Pi, but be warned, these take quite a while to download! The first step is to install Wine, by following [this YouTube video](https://www.youtube.com/watch?v=UCuD5myL6Fc). The only notable difference from the video is that you must install the 64 bit versions of everything, instead of the 86x, ie, Box64, etc. Now, there is an additional add-on needed to run the .exe file from Newport, called .NET. To install this, simply run the following command outside in a new terminal outside of your virtual environment:
 
 ```
 winetricks dotnetsp1
