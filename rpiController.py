@@ -23,11 +23,55 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from matplotlib.patches import Circle
 
+#NOTE, when printing ("PID Error") prints X then Y
+
 # TO RUN: python rpiController.py ttl periodic
 
 #FRAME CENTERS
 xCenter = 500
 yCenter = 500
+
+#MAX REGION, where the beam is not allowed to move outside of this region
+xMaxDist = 100
+yMaxDist = 100
+
+#SET LASER BRIGHTNESS (0-255)
+laserBrightness = 40
+
+''' General program breakdown:
+Lines 49-257:
+-Class and variables for communicating with the Newport 8742 motor controller via USB
+
+Lines 258-385:
+-Class and functions for asychronously capturing frames from the camera, capturing every 0.1 seconds
+-Note, shortening the sleep could cause the camera capture to capture too quickly and possibly quit taking photos
+
+Lines 387-392:
+-Function for waiting for TTL signal
+
+Lines 394-437:
+-Function for actually performing the action of calculating location of beam and moving accordingly
+-Note, depending on distance to camera lens, etc., the formula for moveX and moveY will need to be adjusted,
+but they are currently set for a camera 5cm away from a 50mm lens
+
+Lines 439-465:
+-Functions for waiting for TTL signal and then performing action, and also performing action every hour; The TTL 
+action has priority and when they are triggered at the same time, the action will only happen once
+
+Lines 516-529:
+-Defining global variables, an instance of the motor controller, defining an instane of the Vimba camera system, and defining the pin that the TTL 
+will talk to on the Pi
+
+Lines 532-552:
+-Initializing the system, and setting up the frame capture, periodic action, and signaled action threads, these threads 
+call their indicated functions with the indicated arguments and run constantly and will never join unless there is an 
+issue (error). Although they run independently they communicate with the locks, preventing interference when two threads 
+try to do the same action, and allowing the threads to safely share global vars
+
+Lines 556-561:
+-Commands for the threads to join, but with no errors, they will never join
+'''
+
 
 class Handler:
     def __init__(self):
@@ -443,7 +487,6 @@ class Controller(object):
 
 # Function to be executed when signal is received or every hour
 def perform_action(vmb, controller):
-	
 	#center of frame
 	global yCenter, xCenter
 	loop = 0
@@ -473,57 +516,74 @@ def perform_action(vmb, controller):
 	#calculate converts the frame to binary the moments of the image and the x and y centroids
 	
 	while True:
-	    
-	    newFrame = False
-	    global shared_frame
-	    
-	    loop = loop +1
-	    
-	    with frame_lock:
-	        frame = shared_frame
-	        newFrame = True
-	    
-	    try:
-	        if newFrame == True:
-	            maxB = np.max(frame)
-	            _, binary = cv2.threshold(frame,maxB*0.5,255,cv2.THRESH_BINARY)
-	            M = cv2.moments(binary)
-	            cenX = np.round(M['m10']/M['m00']) #(M10/M00)
-	            cenY = np.round(M['m01']/M['m00']) #(M01/M00)
-	            
-	            print("X, Y Centroids:",cenX, cenY)
-	            
-	            if((cenX == xCenter) and (cenY ==  yCenter)) or (xDone == True and yDone == True) or (loop==7):
-	                break
-	                
-	            if(cenX == xCenter):
-	                xDone = True
-	            if(cenY == yCenter):
-	                yDone = True
-	                    
-	            pidX.update(cenX)
-	            pidY.update(cenY)
-	            pixX = pidX.output
-	            pixY = pidY.output
-	            
-	            moveX= np.round(((pixX)/0.003794 )*(0.7*0.07)/8)
-	            moveY = np.round(-((pixY)/0.003794 )*(0.7*0.07)/4)
-	            
-	            print(moveX, moveY, "move")
-	        
-	            if(yDone == False):
-	                controller.command('2PR' + str(moveY))
-	                sleep((moveY*0.000260005) + 0.2)
-
-	            if(xDone == False):
-	                controller.command('1PR' + str(moveX))
-	                sleep((moveX*0.000260005) + 0.3)  
-	    
-	    except:
-	        pass
-	        
-	                    
-	    sleep(0.3)
+	
+		newFrame = False
+		global shared_frame
+		
+		loop = loop +1
+		
+		with frame_lock:
+			frame = shared_frame
+			newFrame = True
+		
+		try:
+			if newFrame == True:
+				maxB = np.max(frame)
+				_, binary = cv2.threshold(frame,maxB*0.5,255,cv2.THRESH_BINARY)
+				M = cv2.moments(binary)
+				cenX = np.round(M['m10']/M['m00']) #(M10/M00)
+				cenY = np.round(M['m01']/M['m00']) #(M01/M00)
+				
+				print("X, Y Centroids:",cenX, cenY)
+				
+				if((cenX == xCenter) and (cenY ==  yCenter)) or (xDone == True and yDone == True) or (loop==7):
+					break
+				
+				if(maxB <= laserBrightness):
+					print("No laser found, quitting.")
+					break
+				
+				if(cenX == xCenter):
+					xDone = True
+				if(cenY == yCenter):
+					yDone = True
+				    
+				pidX.update(cenX)
+				pidY.update(cenY)
+				
+				pixX = pidX.output
+				pixY = pidY.output
+				
+				newPosX = pixX + cenX
+				newPosY = pixY + cenY
+				
+				badMoveX = False
+				badMoveY = False
+				
+				if((np.absolute(xCenter-newPosX) >= np.absolute(xCenter-cenX)) and (newPosX >= xCenter+xMaxDist or newPosX <= xCenter-xMaxDist)):
+					print("Bad move X")
+					badMoveX = True
+				
+				if((np.absolute(yCenter-newPosY) >= np.absolute(yCenter-cenY)) and (newPosY >= yCenter+yMaxDist or newPosY <= yCenter-yMaxDist)):
+					print("Bad move Y")
+					badMoveY = True
+				
+				moveX= np.round(((pixX)/0.003794 )*(0.7*0.07)/8)
+				moveY = np.round(-((pixY)/0.003794 )*(0.7*0.07)/4)
+								
+				if(yDone == False):
+					controller.command('2PR' + str(moveY))
+					sleep((moveY*0.000260005) + 0.2)
+				
+				if(xDone == False):
+					controller.command('1PR' + str(moveX))
+					sleep((moveX*0.000260005) + 0.3)  
+			
+		except:
+			pass
+		
+			    
+		sleep(0.3)
 
 # Function to wait for a GPIO signal
 def wait_for_signal(event, actionLock, vmb, controller):	
@@ -631,12 +691,8 @@ def checkArgs(signal_thread, action_thread):
 				signal_thread.start()
 				signal = True
 				print("Starting WITH TTL input actions.")
-			
-			else:
-				print ("One or more flags not recognized. Starting WITHOUT periodic actions and/or WITHOUT TTL.")
-				
-	else:
-		print ("One or more flags not recognized. Starting WITHOUT periodic actions and/or WITHOUT TTL.")
+	elif(len(sys.argv) >=4):
+		print ("One or more flags not recognized. Starting WITHOUT periodic actions and/or WITHOUT TTL unless noted above.")
 
 #define global variables
 done = False
